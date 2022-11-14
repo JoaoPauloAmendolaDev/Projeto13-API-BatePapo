@@ -8,12 +8,17 @@
     "method": "POST",
     "sortNum": 0,
     "created": "2022-11-11T02:54:45.233Z",
-    "modified": "2022-11-11T04:49:03.695Z",
-    "headers": [],
+    "modified": "2022-11-14T00:05:11.146Z",
+    "headers": [
+      {
+        "name": "User",
+        "value": "joaozin"
+      }
+    ],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"name\": \"231\"\n}",
+      "raw": "  {\n    \"name\": \"joaozin123\"\n  }",
       "form": []
     },
     "tests": []
@@ -27,12 +32,17 @@
     "method": "GET",
     "sortNum": 0,
     "created": "2022-11-11T03:24:25.183Z",
-    "modified": "2022-11-11T04:56:14.346Z",
-    "headers": [],
+    "modified": "2022-11-14T00:08:35.881Z",
+    "headers": [
+      {
+        "name": "User",
+        "value": "joaozin"
+      }
+    ],
     "params": [],
     "body": {
       "type": "json",
-      "raw": "{\n  \"name\": \"231\"\n}",
+      "raw": "  {\n    \"name\": \"joaozin123\"\n  }",
       "form": []
     },
     "tests": []
@@ -128,6 +138,78 @@
     "body": {
       "type": "json",
       "raw": "{\n  \"to\" : \"joao\",\n  \"text\" : \"aqui vem o texto\",\n  \"type\" : \"message\"\n}",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "3dde7068-5ec7-431a-b8cf-1dd5db2fa17a",
+    "colId": "history",
+    "containerId": "",
+    "name": "localhost:5000/messages",
+    "url": "localhost:5000/messages",
+    "method": "POST",
+    "sortNum": 0,
+    "created": "2022-11-11T20:28:30.492Z",
+    "modified": "2022-11-13T23:27:13.053Z",
+    "headers": [
+      {
+        "name": "User",
+        "value": "joaozin"
+      }
+    ],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "  {\n    \"to\": \"Todos\",\n    \"text\": \"aqui melhor\",\n    \"type\": \"message\"\n  }",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "45e98175-1120-43e3-a55e-e8e112d96e6e",
+    "colId": "history",
+    "containerId": "",
+    "name": "localhost:5000/messages",
+    "url": "localhost:5000/messages",
+    "method": "GET",
+    "sortNum": 0,
+    "created": "2022-11-11T20:33:55.925Z",
+    "modified": "2022-11-13T23:27:19.906Z",
+    "headers": [
+      {
+        "name": "User",
+        "value": "joaozin"
+      }
+    ],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "  {\n    \"to\": \"Todos\",\n    \"text\": \"aqui melhor\",\n    \"type\": \"message\"\n  }",
+      "form": []
+    },
+    "tests": []
+  },
+  {
+    "_id": "47cde3ee-11c3-43c8-b4df-1695c675597a",
+    "colId": "history",
+    "containerId": "",
+    "name": "localhost:5000/message",
+    "url": "localhost:5000/message",
+    "method": "POST",
+    "sortNum": 0,
+    "created": "2022-11-13T18:50:36.682Z",
+    "modified": "2022-11-13T18:50:36.718Z",
+    "headers": [
+      {
+        "name": "name",
+        "value": "joaozin"
+      }
+    ],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"to\" : \"todos\",\n  \"text\" : \"mensagem aqui!\",\n  \"type\" :\"message\"\n}",
       "form": []
     },
     "tests": []

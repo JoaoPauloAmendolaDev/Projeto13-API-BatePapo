@@ -10,6 +10,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+let fifteenSeconds = 5;
+
 const userSchema = joi.object({
   name: joi.string().required().max(15).min(3),
 });
@@ -31,30 +33,37 @@ app.post("/participants", async (req, res) => {
   const validation = userSchema.validate(req.body, { abortEarly: false });
 
   if (validation.error) {
-    console.log("DEU RUIM");
     const errors = validation.error.details.map((detail) => detail.message);
     res.status(422).send(`${errors}`);
     return;
   }
 
+  const isNotAvaible = await db
+    .collection("participants")
+    .findOne({ name: name });
+
+  console.log(isNotAvaible);
+
+  if (isNotAvaible) {
+    res.sendStatus(409);
+    return;
+  }
+
   try {
-    console.log("entrei no try");
-    await db.collection("participantes").insertOne({
-      nome: name,
+    await db.collection("participants").insertOne({
+      name: name,
       lastStatus: Math.round(Date.now() / 1000),
     });
-    await db.collection("batePapo").insertOne({
+    await db.collection("messages").insertOne({
       from: "xxx",
       to: "todos",
       text: `${name} entra na sala...`,
       type: "status",
-      time: dayjs().format("HH/mm/ss"),
+      time: dayjs().format("HH:mm:ss"),
     });
     res.sendStatus(201);
     return;
   } catch (err) {
-    console.log("não conseguiu fazer o insert");
-    console.log(err);
     res.status(500).send(err);
     return;
   }
@@ -62,32 +71,100 @@ app.post("/participants", async (req, res) => {
 
 app.post("/messages", async (req, res) => {
   const message = req.body;
+  const { user } = req.headers;
   const validation = messageSchema.validate(message, { abortEarly: false });
-  console.log(message);
+  message.from = user;
 
-  if (!validation) {
-    console.log("DEU RUIM");
+  if (!user) {
+    console.log(user);
+    res.sendStatus(402);
+    return;
+  }
+
+  if (validation.error) {
     const errors = validation.error.details.map((detail) => detail.message);
     res.status(422).send(`${errors}`);
     return;
   }
 
   try {
-    await db.collection("batePapo").insertOne(message);
+    message.time = dayjs().format("HH:mm:ss");
+    await db.collection("messages").insertOne(message);
+    const timeNow = Math.round(Date.now() / 1000);
+    await db
+      .collection("participants")
+      .updateOne({ name: user }, { $set: { lastStatus: timeNow } });
     res.status(201).send("sucesso ao postar a mensagem");
+    return;
   } catch (err) {
     res.sendStatus(422);
-    console.log(err);
+    return;
   }
+});
+
+app.post("/status", async (req, res) => {
+  if (fifteenSeconds === 15) {
+    const listOfParticipants = await db
+      .collection("participants")
+      .find()
+      .toArray();
+
+    const timeNow = Math.round(Date.now() / 1000);
+
+    let listFiltred = listOfParticipants.filter((participant) => {
+      if (timeNow - participant.lastStatus > 10) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+
+    listFiltred.length > 0
+      ? console.log(timeNow - listFiltred[0].lastStatus)
+      : "";
+
+    for (let i = 0; i < listFiltred.length; i++) {
+      let from = listFiltred[i].name;
+      let leaveMessage = {
+        from: from,
+        to: "Todos",
+        text: "sai da sala...",
+        type: "status",
+        time: dayjs().format("HH:mm:ss"),
+      };
+      await db.collection("participants").deleteOne(listFiltred[i]);
+      await db.collection("messages").insertOne(leaveMessage);
+    }
+
+    console.log("rodei os 15s");
+    fifteenSeconds = 5;
+  } else {
+    fifteenSeconds += 5;
+  }
+  const timeNow = Math.round(Date.now() / 1000);
+  const { user } = req.headers;
+  await db
+    .collection("participants")
+    .updateOne({ name: user }, { $set: { lastStatus: timeNow } });
+  return res.sendStatus(200);
 });
 
 app.get("/participants", async (req, res) => {
   try {
-    let result = await db.collection("participantes").find().toArray();
-    console.log(result);
+    let result = await db.collection("participants").find().toArray();
+
+    res.send(result);
+  } catch (err) {}
+});
+
+app.get("/messages", async (req, res) => {
+
+
+  try {
+    let result = await db.collection("messages").find().toArray();
     res.send(result);
   } catch (err) {
-    console.log(err, "deu ruim");
+    res.send(err);
   }
 });
 
